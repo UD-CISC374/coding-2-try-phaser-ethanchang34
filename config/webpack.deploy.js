@@ -11,6 +11,10 @@ const EGDD_FILE = "egdd.md";
 module.exports = (env) => {
     let endpoint = env.endpoint;
 
+    if (!fs.existsSync(path.resolve(__dirname, `../dist/${endpoint}/`))) {
+        fs.mkdirSync(path.resolve(__dirname, `../dist/${endpoint}/`));
+    }
+
     // Copy EGDD to appropriate endpoint
     fs.copyFileSync(path.resolve(__dirname, '../', EGDD_FILE),
         path.resolve(__dirname, `../dist/${endpoint}/${EGDD_FILE}`),
@@ -25,6 +29,12 @@ module.exports = (env) => {
     // Update the index file for the dist directory
     // Directory
     // * Game, EGDD
+    fs.copyFileSync(path.resolve(__dirname, 'index.html'),
+        path.resolve(__dirname, `../dist/index.html`),
+        (err) => {
+            if (err) throw err;
+            console.log('index.html was copied to index.html');
+        });
 
     // Build the actual folder of contents
     let ghpages = {
