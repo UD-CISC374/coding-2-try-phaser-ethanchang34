@@ -2,4 +2,6 @@
 
 *At least a URL, but also be sure to include any extra information that the artist/author requests you include.*
 
-https://opengameart.org/content/lpc-golem by Stephen "Redshrike" Challener as graphic artist and William.Thompsonj as contributor
+https://opengameart.org/content/fruits
+https://github.com/ansimuz/getting-started-with-phaser/blob/master/power-up-spritesheetpng.zip
+https://github.com/ansimuz/getting-started-with-phaser/blob/master/spritesheets.zip
