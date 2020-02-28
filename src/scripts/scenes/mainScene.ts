@@ -41,7 +41,11 @@ export default class MainScene extends Phaser.Scene {
     this.player.setCollideWorldBounds(true);
 
     this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-    this.projectiles = this.add.group();
+    this.projectiles = this.add.group({
+      classType: Beam,
+      maxSize: 10,
+      runChildUpdate: true
+    });
 
 
     //Collectibles
@@ -151,10 +155,10 @@ export default class MainScene extends Phaser.Scene {
       //console.log("Fire!");
       this.shootBeam();
     }
-    for (let i = 0; this.projectiles.getChildren().length; i++) {
+    /* for (let i = 0; this.projectiles.getChildren().length; i++) {
       let beam = this.projectiles.getChildren()[i];
       beam.update();
-    }
+    } */
   }
 
   movePlayerManager() {
