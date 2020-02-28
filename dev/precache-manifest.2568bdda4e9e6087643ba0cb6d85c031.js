@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "b3dba3066ac09c4feaaa91810fd27b48",
+    "revision": "5131cdd83054ce2819077d0f842d9b50",
     "url": "/coding-2-try-phaser-ethanchang34/devassets/citations.md"
   },
   {
@@ -64,15 +64,15 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/coding-2-try-phaser-ethanchang34/devassets/spriteSheets/ship3.png"
   },
   {
-    "revision": "91c351cf61342163bbbb",
-    "url": "/coding-2-try-phaser-ethanchang34/devgen.main.eeee501334fd3de9918a.bundle.js"
+    "revision": "3be7b2eb7b42d1c1ed92",
+    "url": "/coding-2-try-phaser-ethanchang34/devgen.main.a1cdeaee403d85b1c849.bundle.js"
   },
   {
     "revision": "14be547c0491a7ebdba1",
     "url": "/coding-2-try-phaser-ethanchang34/devgen.vendors.8fd6f3a45e217d00f1de.bundle.js"
   },
   {
-    "revision": "983e52a8e7cb99d909a830e3c317e1fc",
+    "revision": "745f7751bf501e7714031d0a7f63d22f",
     "url": "/coding-2-try-phaser-ethanchang34/devindex.html"
   },
   {
