@@ -22,6 +22,10 @@ export default class PreloadScene extends Phaser.Scene {
       frameWidth: 32,
       frameHeight: 16
     });
+    this.load.spritesheet("ship3", "assets/spriteSheets/ship3.png", {
+      frameWidth: 32,
+      frameHeight: 32
+    });
     this.load.spritesheet("power-up", "assets/spriteSheets/power-up.png", {
       frameWidth: 16,
       frameHeight: 16
@@ -53,6 +57,12 @@ export default class PreloadScene extends Phaser.Scene {
       frameRate: 20,
       repeat: -1
     });
+    this.anims.create ({
+      key: "ship3_anim",
+      frames: this.anims.generateFrameNumbers("ship3", {}),
+      frameRate: 20,
+      repeat: -1
+    })
     this.anims.create ({
       key: "explode",
       frames: this.anims.generateFrameNumbers("explosion", {}),

@@ -11,6 +11,7 @@ export default class MainScene extends Phaser.Scene {
   ruby: Phaser.Physics.Arcade.Image;
   ship: Phaser.GameObjects.Sprite;
   ship2: Phaser.GameObjects.Sprite;
+  ship3: Phaser.GameObjects.Sprite;
   explosion: Phaser.GameObjects.Sprite;
   powerUps: Phaser.Physics.Arcade.Group;
   player: Phaser.Physics.Arcade.Sprite;
@@ -70,21 +71,27 @@ export default class MainScene extends Phaser.Scene {
     //Enemies
     this.ship = this.add.sprite(this.scale.width - 30, this.scale.height / 2 + 30, "ship");
     this.ship2 = this.add.sprite(this.scale.width - 30, this.scale.height / 2 - 30, "ship2");
+    this.ship3 = this.add.sprite(this.scale.width - 30, this.scale.height / 2 + 60, "ship3");
     this.ship.setScale(2);
     this.ship2.setScale(1.5);
+    this.ship3.setScale(1);
     this.ship.angle += 90;
     this.ship2.angle += 90;
+    this.ship3.angle += 90;
 
     this.ship.play("ship_anim");
     this.ship2.play("ship2_anim");
+    this.ship3.play("ship3.anim");
 
     this.enemies = this.physics.add.group();
     this.enemies.add(this.ship);
     this.enemies.add(this.ship2);
+    this.enemies.add(this.ship3);
 
     //Interactives
     this.ship.setInteractive();
     this.ship2.setInteractive();
+    this.ship3.setInteractive();
     this.input.on('gameobjectdown', this.destroy, this);
     this.physics.add.collider(this.projectiles, this.powerUps, function(projectile, powerUp) {
       projectile.destroy();
@@ -186,6 +193,7 @@ export default class MainScene extends Phaser.Scene {
   update() {
     this.move(this.ship, -5);
     this.move(this.ship2, -5);
+    this.move(this.ship3, -5);
 
     this.mt_back.tilePositionX += 2;
     this.mt_mid.tilePositionX += 3;
