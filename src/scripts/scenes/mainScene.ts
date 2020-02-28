@@ -16,7 +16,7 @@ export default class MainScene extends Phaser.Scene {
   player: Phaser.Physics.Arcade.Sprite;
   cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
   spacebar: Phaser.Input.Keyboard.Key;
-  projectiles: GameObjects.Group;
+  projectiles: Phaser.GameObjects.Group;
   // beam: Phaser.GameObjects.Sprite;
 
   constructor() {
@@ -76,11 +76,15 @@ export default class MainScene extends Phaser.Scene {
     this.ship.setInteractive();
     this.ship2.setInteractive();
     this.input.on('gameobjectdown', this.destroy, this);
+    this.physics.add.collider(this.projectiles, this.powerUps, function(projectiles, powerUp) {
+      projectiles.destroy();
+    });
+    //this.physics.add.overlap(this.player, this.powerUps, this.pickPowerUp, null, this);
 
     /* this.powerUps = this.physics.add.group();
-    var maxObjects = 4;
-    for (var i = 0; i <= maxObjects; i++) {
-      var powerUp = this.physics.add.sprite(16, 16, "power-up");
+    let maxObjects = 4;
+    for (let i = 0; i <= maxObjects; i++) {
+      let powerUp = this.physics.add.sprite(16, 16, "power-up");
       this.powerUps.add(powerUp);
       powerUp.setRandomPosition(0, 0, this.scale.width, this.scale.height);
       if (Math.random() > 0.5) {
@@ -116,7 +120,7 @@ export default class MainScene extends Phaser.Scene {
 
   resetPos(obj) {
     obj.x = this.scale.width - 50;
-    var randomY = Phaser.Math.Between(0, this.scale.height);
+    let randomY = Phaser.Math.Between(0, this.scale.height);
     obj.y = randomY;
   }
 
@@ -126,7 +130,11 @@ export default class MainScene extends Phaser.Scene {
   }
 
   shootBeam() {
-    var beam = new Beam(this);
+    let beam = new Beam(this);
+  }
+
+  pickPowerUp(player, powerUp) {
+    powerUp.disableBody(true, true);
   }
 
   update() {
@@ -143,11 +151,10 @@ export default class MainScene extends Phaser.Scene {
       //console.log("Fire!");
       this.shootBeam();
     }
-
-    /* for (var i = 0; this.projectiles.getChildren().length; i++) {
-      var beam = this.projectiles.getChildren()[i];
+    for (let i = 0; this.projectiles.getChildren().length; i++) {
+      let beam = this.projectiles.getChildren()[i];
       beam.update();
-    } */
+    }
   }
 
   movePlayerManager() {
