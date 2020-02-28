@@ -1,6 +1,7 @@
 import ExampleObject from '../objects/exampleObject';
 import { GameObjects } from 'phaser';
 import Beam from '../objects/beam';
+import Explosion from '../objects/explosion';
 
 export default class MainScene extends Phaser.Scene {
   mt_back: Phaser.GameObjects.TileSprite;
@@ -12,7 +13,7 @@ export default class MainScene extends Phaser.Scene {
   ship: Phaser.GameObjects.Sprite;
   ship2: Phaser.GameObjects.Sprite;
   ship3: Phaser.GameObjects.Sprite;
-  explosion: Phaser.GameObjects.Sprite;
+  // explosion: Phaser.GameObjects.Sprite;
   powerUps: Phaser.Physics.Arcade.Group;
   player: Phaser.Physics.Arcade.Sprite;
   cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -92,7 +93,7 @@ export default class MainScene extends Phaser.Scene {
     this.ship.setInteractive();
     this.ship2.setInteractive();
     this.ship3.setInteractive();
-    this.input.on('gameobjectdown', this.destroy, this);
+    // this.input.on('gameobjectdown', this.destroy, this);
     this.physics.add.collider(this.projectiles, this.powerUps, function(projectile, powerUp) {
       projectile.destroy();
     });
@@ -169,6 +170,7 @@ export default class MainScene extends Phaser.Scene {
   }
 
   hurtPlayer(player, enemy) {
+    let explosion = new Explosion(this, player.x, player.y);
     this.resetPos(enemy);
     player.x = this.scale.width / 2 - 8;
     player.y = this.scale.height / 2 - 64;
@@ -176,6 +178,7 @@ export default class MainScene extends Phaser.Scene {
 
   hitEnemy(projectile, enemy) {
     projectile.destroy();
+    let explosion = new Explosion(this, enemy.x, enemy.y);
     this.resetPos(enemy);
     this.score += 15;
     let scoreFormated = this.zeroPad(this.score, 6);
