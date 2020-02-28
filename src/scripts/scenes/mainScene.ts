@@ -1,6 +1,6 @@
 import ExampleObject from '../objects/exampleObject';
 import { GameObjects } from 'phaser';
-import Beam from './beam';
+import Beam from '../objects/beam';
 
 export default class MainScene extends Phaser.Scene {
   mt_back: Phaser.GameObjects.TileSprite;
@@ -16,7 +16,8 @@ export default class MainScene extends Phaser.Scene {
   player: Phaser.Physics.Arcade.Sprite;
   cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
   spacebar: Phaser.Input.Keyboard.Key;
-  //powerUps: Phaser.GameObjects.Sprite;
+  projectiles: GameObjects.Group;
+  // beam: Phaser.GameObjects.Sprite;
 
   constructor() {
     super({ key: 'MainScene' });
@@ -40,6 +41,7 @@ export default class MainScene extends Phaser.Scene {
     this.player.setCollideWorldBounds(true);
 
     this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    this.projectiles = this.add.group();
 
 
     //Collectibles
@@ -91,14 +93,14 @@ export default class MainScene extends Phaser.Scene {
       powerUp.setBounce(1);
     } */
 
-    this.powerUps.add(this.physics.add.image(this.apple.width, this.apple.height, "apple"));
+    /* this.powerUps.add(this.physics.add.image(this.apple.width, this.apple.height, "apple"));
     this.apple.setRandomPosition(0, 0, this.scale.width, this.scale.height);
     this.powerUps.add(this.physics.add.image(this.apple.width, this.apple.height, "apple"));
     this.apple.setRandomPosition(0, 0, this.scale.width, this.scale.height); // I want 2 apples
     this.powerUps.add(this.physics.add.image(this.pear.width, this.pear.height, "pear"));
     this.pear.setRandomPosition(0, 0, this.scale.width, this.scale.height);
     this.powerUps.add(this.physics.add.image(this.ruby.width, this.ruby.height, "ruby"));
-    this.ruby.setRandomPosition(0, 0, this.scale.width, this.scale.height);
+    this.ruby.setRandomPosition(0, 0, this.scale.width, this.scale.height); */
 
 
     //this.cameras.main.startFollow(this.player);
@@ -128,9 +130,6 @@ export default class MainScene extends Phaser.Scene {
   }
 
   update() {
-    /* this.move(this.ruby, -15);
-    this.move(this.apple, -8);
-    this.move(this.pear, -6) */
     this.move(this.ship, -5);
     this.move(this.ship2, -5);
 
@@ -144,6 +143,11 @@ export default class MainScene extends Phaser.Scene {
       //console.log("Fire!");
       this.shootBeam();
     }
+
+    /* for (var i = 0; this.projectiles.getChildren().length; i++) {
+      var beam = this.projectiles.getChildren()[i];
+      beam.update();
+    } */
   }
 
   movePlayerManager() {
@@ -158,12 +162,5 @@ export default class MainScene extends Phaser.Scene {
     } else {
       this.player.setVelocity(0, 0);
     }
-
-
-    /* if (this.cursorKeys.left.isDown) {
-      this.player.setVelocityX(-160);
-    } else if (this.cursorKeys.right.isDown) {
-      this.player.setVelocityX(gameSettings.playerSpeed);
-    } */
   }
 }
