@@ -13,7 +13,8 @@ export default class MainScene extends Phaser.Scene {
   ship: Phaser.GameObjects.Sprite;
   ship2: Phaser.GameObjects.Sprite;
   ship3: Phaser.GameObjects.Sprite;
-  powerUps: Phaser.Physics.Arcade.Group;
+  // powerUps: Phaser.Physics.Arcade.Group;
+  powerUps: Phaser.GameObjects.Group;
   player: Phaser.Physics.Arcade.Sprite;
   cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
   spacebar: Phaser.Input.Keyboard.Key;
@@ -93,6 +94,7 @@ export default class MainScene extends Phaser.Scene {
     this.ship2.setInteractive();
     this.ship3.setInteractive(); */
     // this.input.on('gameobjectdown', this.destroy, this);
+    this.powerUps = this.add.group();
     this.physics.add.collider(this.projectiles, this.powerUps, function(projectile, powerUp) {
       projectile.destroy();
     });
@@ -100,7 +102,7 @@ export default class MainScene extends Phaser.Scene {
     this.physics.add.overlap(this.player, this.enemies, this.hurtPlayer, undefined, this);
     this.physics.add.overlap(this.projectiles, this.enemies, this.hitEnemy, undefined, this);
 
-    this.powerUps = this.physics.add.group();
+    
     let maxObjects = 4;
     for (let i = 0; i <= maxObjects; i++) {
       let powerUp = this.physics.add.sprite(16, 16, "power-up");
@@ -142,7 +144,8 @@ export default class MainScene extends Phaser.Scene {
     graphics.closePath();
     graphics.fillPath();
     this.score = 0;
-    this.scoreLabel = this.add.bitmapText(10, 5, "pixelFont", "SCORE ", 16);
+    let scoreFormated = this.zeroPad(this.score, 6);
+    this.scoreLabel = this.add.bitmapText(10, 5, "pixelFont", "SCORE " + scoreFormated, 16);
     this.add.text(10, 20, "Playing game...", {font: "12px Arial", fill: "black"});
   }
 
@@ -159,33 +162,35 @@ export default class MainScene extends Phaser.Scene {
     obj.y = randomY;
   }
 
-  /* destroy(pointer, gameObject) {
-    gameObject.setTexture("explosion");
-    gameObject.play("explode");
-  } */
-
   shootBeam() {
     let beam = new Beam(this);
   }
 
   pickPowerUp(player, powerUp) {
+    this.score += 250
+    let scoreFormated = this.zeroPad(this.score, 6);
+    this.scoreLabel.text = "SCORE " + scoreFormated;
     powerUp.disableBody(true, true);
   }
 
   hurtPlayer(player, enemy) {
     let explosion = new Explosion(this, player.x, player.y);
+    this.score = 0;
+    let scoreFormated = this.zeroPad(this.score, 6);
+    this.scoreLabel.text = "SCORE " + scoreFormated;
     this.resetPos(enemy);
     player.x = this.scale.width / 2 - 64;
     player.y = this.scale.height / 2 - 24;
   }
 
   hitEnemy(projectile, enemy) {
-    projectile.disableBody(true, true);
+    // projectile.disableBody(true, true);
+    projectile.destroy();
     let explosion = new Explosion(this, enemy.x, enemy.y);
     this.resetPos(enemy);
-    this.score += 15;
+    this.score += 100;
     let scoreFormated = this.zeroPad(this.score, 6);
-    this.scoreLabel.text = "SCORE " + this.score;
+    this.scoreLabel.text = "SCORE " + scoreFormated;
   }
 
   zeroPad(number, size) {
@@ -197,9 +202,9 @@ export default class MainScene extends Phaser.Scene {
   }
 
   update() {
-    this.move(this.ship, -5);
-    this.move(this.ship2, -5);
-    this.move(this.ship3, -5);
+    this.move(this.ship, -4);
+    this.move(this.ship2, -4);
+    this.move(this.ship3, -4);
 
     this.mt_back.tilePositionX += 2;
     this.mt_mid.tilePositionX += 3;
@@ -208,7 +213,6 @@ export default class MainScene extends Phaser.Scene {
     this.movePlayerManager();
 
     if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
-      //console.log("Fire!");
       this.shootBeam();
     }
   }
