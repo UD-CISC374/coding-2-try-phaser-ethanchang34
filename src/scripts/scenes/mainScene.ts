@@ -13,7 +13,6 @@ export default class MainScene extends Phaser.Scene {
   ship: Phaser.GameObjects.Sprite;
   ship2: Phaser.GameObjects.Sprite;
   ship3: Phaser.GameObjects.Sprite;
-  // explosion: Phaser.GameObjects.Sprite;
   powerUps: Phaser.Physics.Arcade.Group;
   player: Phaser.Physics.Arcade.Sprite;
   cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -47,7 +46,7 @@ export default class MainScene extends Phaser.Scene {
     this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     this.projectiles = this.add.group({
       classType: Beam,
-      maxSize: 10,
+      maxSize: 15,
       runChildUpdate: true
     });
 
@@ -89,10 +88,10 @@ export default class MainScene extends Phaser.Scene {
     this.enemies.add(this.ship2);
     this.enemies.add(this.ship3);
 
-    //Interactives
-    this.ship.setInteractive();
+    //Interactives & Physics
+    /* this.ship.setInteractive();
     this.ship2.setInteractive();
-    this.ship3.setInteractive();
+    this.ship3.setInteractive(); */
     // this.input.on('gameobjectdown', this.destroy, this);
     this.physics.add.collider(this.projectiles, this.powerUps, function(projectile, powerUp) {
       projectile.destroy();
@@ -105,6 +104,7 @@ export default class MainScene extends Phaser.Scene {
     let maxObjects = 4;
     for (let i = 0; i <= maxObjects; i++) {
       let powerUp = this.physics.add.sprite(16, 16, "power-up");
+      powerUp.setScale(1.5);
       this.powerUps.add(powerUp);
       powerUp.setRandomPosition(0, 0, this.scale.width, this.scale.height);
       if (Math.random() > 0.5) {
@@ -117,6 +117,9 @@ export default class MainScene extends Phaser.Scene {
       powerUp.setBounce(1);
     }
 
+    this.powerUps.add(this.apple)
+    this.powerUps.add(this.pear);
+    this.powerUps.add(this.ruby);
     /* this.powerUps.add(this.physics.add.image(this.apple.width, this.apple.height, "apple"));
     this.apple.setRandomPosition(0, 0, this.scale.width, this.scale.height);
     this.powerUps.add(this.physics.add.image(this.apple.width, this.apple.height, "apple"));
@@ -156,10 +159,10 @@ export default class MainScene extends Phaser.Scene {
     obj.y = randomY;
   }
 
-  destroy(pointer, gameObject) {
+  /* destroy(pointer, gameObject) {
     gameObject.setTexture("explosion");
     gameObject.play("explode");
-  }
+  } */
 
   shootBeam() {
     let beam = new Beam(this);
@@ -172,12 +175,12 @@ export default class MainScene extends Phaser.Scene {
   hurtPlayer(player, enemy) {
     let explosion = new Explosion(this, player.x, player.y);
     this.resetPos(enemy);
-    player.x = this.scale.width / 2 - 8;
-    player.y = this.scale.height / 2 - 64;
+    player.x = this.scale.width / 2 - 64;
+    player.y = this.scale.height / 2 - 24;
   }
 
   hitEnemy(projectile, enemy) {
-    projectile.destroy();
+    projectile.disableBody(true, true);
     let explosion = new Explosion(this, enemy.x, enemy.y);
     this.resetPos(enemy);
     this.score += 15;

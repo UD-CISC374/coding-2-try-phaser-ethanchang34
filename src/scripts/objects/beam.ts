@@ -1,4 +1,3 @@
-//export default class Beam extends Phaser.GameObjects.Sprite {
 export default class Beam extends Phaser.Physics.Arcade.Sprite {
     body: Phaser.Physics.Arcade.Body;
 
