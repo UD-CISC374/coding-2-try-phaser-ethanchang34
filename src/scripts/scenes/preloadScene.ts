@@ -22,7 +22,7 @@ export default class PreloadScene extends Phaser.Scene {
       frameWidth: 32,
       frameHeight: 16
     });
-    this.load.spritesheet("power-up", "assets/spriteSheets/power-up", {
+    this.load.spritesheet("power-up", "assets/spriteSheets/power-up.png", {
       frameWidth: 16,
       frameHeight: 16
     });
@@ -34,6 +34,7 @@ export default class PreloadScene extends Phaser.Scene {
       frameWidth: 16,
       frameHeight: 16,
     });
+    this.load.bitmapFont("pixelFont", "assets/font/font.png", "assets/font/font.xml");
   }
 
   create() {

@@ -17,7 +17,9 @@ export default class MainScene extends Phaser.Scene {
   cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
   spacebar: Phaser.Input.Keyboard.Key;
   projectiles: Phaser.GameObjects.Group;
-  // beam: Phaser.GameObjects.Sprite;
+  enemies: Phaser.Physics.Arcade.Group;
+  scoreLabel: GameObjects.BitmapText;
+  score: number;
 
   constructor() {
     super({ key: 'MainScene' });
@@ -69,23 +71,29 @@ export default class MainScene extends Phaser.Scene {
     this.ship = this.add.sprite(this.scale.width - 30, this.scale.height / 2 + 30, "ship");
     this.ship2 = this.add.sprite(this.scale.width - 30, this.scale.height / 2 - 30, "ship2");
     this.ship.setScale(2);
-    this.ship2.setScale(2);
-    this.ship.angle -= 90;
-    this.ship2.angle -= 90;
+    this.ship2.setScale(1.5);
+    this.ship.angle += 90;
+    this.ship2.angle += 90;
 
     this.ship.play("ship_anim");
     this.ship2.play("ship2_anim");
+
+    this.enemies = this.physics.add.group();
+    this.enemies.add(this.ship);
+    this.enemies.add(this.ship2);
 
     //Interactives
     this.ship.setInteractive();
     this.ship2.setInteractive();
     this.input.on('gameobjectdown', this.destroy, this);
-    this.physics.add.collider(this.projectiles, this.powerUps, function(projectiles, powerUp) {
-      projectiles.destroy();
+    this.physics.add.collider(this.projectiles, this.powerUps, function(projectile, powerUp) {
+      projectile.destroy();
     });
-    //this.physics.add.overlap(this.player, this.powerUps, this.pickPowerUp, null, this);
+    this.physics.add.overlap(this.player, this.powerUps, this.pickPowerUp, undefined, this);
+    this.physics.add.overlap(this.player, this.enemies, this.hurtPlayer, undefined, this);
+    this.physics.add.overlap(this.projectiles, this.enemies, this.hitEnemy, undefined, this);
 
-    /* this.powerUps = this.physics.add.group();
+    this.powerUps = this.physics.add.group();
     let maxObjects = 4;
     for (let i = 0; i <= maxObjects; i++) {
       let powerUp = this.physics.add.sprite(16, 16, "power-up");
@@ -99,7 +107,7 @@ export default class MainScene extends Phaser.Scene {
       powerUp.setVelocity(100, 100)
       powerUp.setCollideWorldBounds(true);
       powerUp.setBounce(1);
-    } */
+    }
 
     /* this.powerUps.add(this.physics.add.image(this.apple.width, this.apple.height, "apple"));
     this.apple.setRandomPosition(0, 0, this.scale.width, this.scale.height);
@@ -112,7 +120,19 @@ export default class MainScene extends Phaser.Scene {
 
 
     //this.cameras.main.startFollow(this.player);
-    this.add.text(20, 20, "Playing game...", {font: "25px Arial", fill: "black"});
+    let graphics = this.add.graphics();
+    graphics.fillStyle(0x000000, 1);
+    graphics.beginPath();
+    graphics.moveTo(0, 0);
+    graphics.lineTo(this.scale.width, 0);
+    graphics.lineTo(this.scale.width, 20);
+    graphics.lineTo(0, 20);
+    graphics.lineTo(0, 0);
+    graphics.closePath();
+    graphics.fillPath();
+    this.score = 0;
+    this.scoreLabel = this.add.bitmapText(10, 5, "pixelFont", "SCORE ", 16);
+    this.add.text(10, 20, "Playing game...", {font: "12px Arial", fill: "black"});
   }
 
   move(obj, speed) {
@@ -141,6 +161,28 @@ export default class MainScene extends Phaser.Scene {
     powerUp.disableBody(true, true);
   }
 
+  hurtPlayer(player, enemy) {
+    this.resetPos(enemy);
+    player.x = this.scale.width / 2 - 8;
+    player.y = this.scale.height / 2 - 64;
+  }
+
+  hitEnemy(projectile, enemy) {
+    projectile.destroy();
+    this.resetPos(enemy);
+    this.score += 15;
+    let scoreFormated = this.zeroPad(this.score, 6);
+    this.scoreLabel.text = "SCORE " + this.score;
+  }
+
+  zeroPad(number, size) {
+    let stringNumber = String(number);
+    while (stringNumber.length < (size || 2)) {
+      stringNumber = "0" + stringNumber;
+    }
+    return stringNumber;
+  }
+
   update() {
     this.move(this.ship, -5);
     this.move(this.ship2, -5);
@@ -155,23 +197,22 @@ export default class MainScene extends Phaser.Scene {
       //console.log("Fire!");
       this.shootBeam();
     }
-    /* for (let i = 0; this.projectiles.getChildren().length; i++) {
-      let beam = this.projectiles.getChildren()[i];
-      beam.update();
-    } */
   }
 
   movePlayerManager() {
     if (this.cursorKeys.left?.isDown) {
-      this.player.setVelocityX(-100);
+      this.player.setVelocityX(-200);
     } else if (this.cursorKeys.right?.isDown) {
-      this.player.setVelocityX(100);
-    } else if (this.cursorKeys.up?.isDown) {
-      this.player.setVelocityY(-100);
-    } else if (this.cursorKeys.down?.isDown) {
-      this.player.setVelocityY(100);
+      this.player.setVelocityX(200);
     } else {
-      this.player.setVelocity(0, 0);
+      this.player.setVelocityX(0);
+    }
+    if (this.cursorKeys.up?.isDown) {
+      this.player.setVelocityY(-200);
+    } else if (this.cursorKeys.down?.isDown) {
+      this.player.setVelocityY(200);
+    } else {
+      this.player.setVelocityY(0);
     }
   }
 }

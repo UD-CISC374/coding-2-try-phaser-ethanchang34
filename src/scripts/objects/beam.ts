@@ -11,7 +11,8 @@ export default class Beam extends Phaser.Physics.Arcade.Sprite {
 
         this.play("beam_anim");
         scene.physics.world.enableBody(this);
-        this.body.velocity.x = 250;
+        this.body.velocity.x = 450;
+        this.angle += 90;
     }
 
     update() {
