@@ -1,4 +1,3 @@
-import ExampleObject from '../objects/exampleObject';
 import { GameObjects } from 'phaser';
 import Beam from '../objects/beam';
 import Explosion from '../objects/explosion';
@@ -7,19 +6,22 @@ export default class MainScene extends Phaser.Scene {
   mt_back: Phaser.GameObjects.TileSprite;
   mt_mid: Phaser.GameObjects.TileSprite;
   mt_front: Phaser.GameObjects.TileSprite;
+
   apple: Phaser.Physics.Arcade.Image;
   pear: Phaser.Physics.Arcade.Image;
   ruby: Phaser.Physics.Arcade.Image;
+  powerUps: Phaser.GameObjects.Group;
+
   ship: Phaser.GameObjects.Sprite;
   ship2: Phaser.GameObjects.Sprite;
   ship3: Phaser.GameObjects.Sprite;
-  // powerUps: Phaser.Physics.Arcade.Group;
-  powerUps: Phaser.GameObjects.Group;
+  enemies: Phaser.Physics.Arcade.Group;
+
   player: Phaser.Physics.Arcade.Sprite;
   cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
   spacebar: Phaser.Input.Keyboard.Key;
   projectiles: Phaser.GameObjects.Group;
-  enemies: Phaser.Physics.Arcade.Group;
+
   scoreLabel: GameObjects.BitmapText;
   score: number;
 
@@ -90,10 +92,6 @@ export default class MainScene extends Phaser.Scene {
     this.enemies.add(this.ship3);
 
     //Interactives & Physics
-    /* this.ship.setInteractive();
-    this.ship2.setInteractive();
-    this.ship3.setInteractive(); */
-    // this.input.on('gameobjectdown', this.destroy, this);
     this.powerUps = this.add.group();
     this.physics.add.collider(this.projectiles, this.powerUps, function(projectile, powerUp) {
       projectile.destroy();
@@ -157,13 +155,13 @@ export default class MainScene extends Phaser.Scene {
   }
 
   resetPos(obj) {
-    obj.x = this.scale.width - 50;
+    obj.x = this.scale.width - 10;
     let randomY = Phaser.Math.Between(0, this.scale.height);
     obj.y = randomY;
   }
 
   shootBeam() {
-    let beam = new Beam(this);
+    let beam = new Beam(this, this.player.x, this.player.y);
   }
 
   pickPowerUp(player, powerUp) {
@@ -184,13 +182,15 @@ export default class MainScene extends Phaser.Scene {
   }
 
   hitEnemy(projectile, enemy) {
-    // projectile.disableBody(true, true);
     projectile.destroy();
     let explosion = new Explosion(this, enemy.x, enemy.y);
     this.resetPos(enemy);
     this.score += 100;
     let scoreFormated = this.zeroPad(this.score, 6);
     this.scoreLabel.text = "SCORE " + scoreFormated;
+    if (this.score >= 3000) { //boss battle
+      this.scene.start('BossScene');
+    }
   }
 
   zeroPad(number, size) {
