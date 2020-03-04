@@ -2,6 +2,7 @@ import 'phaser';
 import MainScene from './scenes/mainScene';
 import PreloadScene from './scenes/preloadScene';
 import BossScene from './scenes/bossScene';
+import WinScene from './scenes/winScene';
 import Beam from './objects/beam';
 import GameConfig = Phaser.Types.Core.GameConfig;
 
@@ -18,13 +19,16 @@ const config: GameConfig = {
         width: DEFAULT_WIDTH,
         height: DEFAULT_HEIGHT
     },
-    scene: [PreloadScene, MainScene, BossScene],
+    scene: [PreloadScene, MainScene, BossScene, WinScene],
     physics: {
         default: 'arcade',
         arcade: {
             debug: false,
             //gravity: { y: 400 }
         }
+    },
+    render: {
+        pixelArt: true
     }
 };
 

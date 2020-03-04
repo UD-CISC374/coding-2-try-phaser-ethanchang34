@@ -1,5 +1,6 @@
 import { GameObjects } from 'phaser';
 import Beam from '../objects/beam';
+import BossBeam from '../objects/BossBeam';
 import Explosion from '../objects/explosion';
 
 export default class BossScene extends Phaser.Scene {
@@ -7,13 +8,14 @@ export default class BossScene extends Phaser.Scene {
     mt_mid: Phaser.GameObjects.TileSprite;
     mt_front: Phaser.GameObjects.TileSprite;
 
-    // boss: Phaser.GameObjects.Sprite;
     boss: Phaser.Physics.Arcade.Sprite;
     enemies: Phaser.Physics.Arcade.Group;
     player: Phaser.Physics.Arcade.Sprite;
     cursorKeys: Phaser.Types.Input.Keyboard.CursorKeys;
     spacebar: Phaser.Input.Keyboard.Key;
     projectiles: Phaser.GameObjects.Group;
+    bossProjectiles: Phaser.GameObjects.Group;
+    bossHealth: number = 25;
    
     scoreLabel: GameObjects.BitmapText;
     score: number;
@@ -54,10 +56,28 @@ export default class BossScene extends Phaser.Scene {
         this.boss.flipX = true;
         this.enemies.setVelocityY(-200);
         this.boss.setCollideWorldBounds(true);
+        this.bossProjectiles = this.add.group({
+            classType: BossBeam,
+            maxSize: 20,
+            runChildUpdate: true
+        });
 
         //Interactions
         this.physics.add.overlap(this.projectiles, this.enemies, this.hitEnemy, undefined, this);
         this.physics.add.overlap(this.player, this.enemies, this.hurtPlayer, undefined, this);
+        this.physics.add.overlap(this.bossProjectiles, this.player, this.hurtPlayer, undefined, this);
+    
+        let graphics = this.add.graphics();
+        graphics.fillStyle(0x000000, 1);
+        graphics.beginPath();
+        graphics.moveTo(0, 0);
+        graphics.lineTo(this.scale.width, 0);
+        graphics.lineTo(this.scale.width, 20);
+        graphics.lineTo(0, 20);
+        graphics.lineTo(0, 0);
+        graphics.closePath();
+        graphics.fillPath();
+        this.scoreLabel = this.add.bitmapText(10, 5, "pixelFont", "Boss HP: " + this.bossHealth, 16);
     }
     
     resetPos(obj) {
@@ -83,17 +103,52 @@ export default class BossScene extends Phaser.Scene {
     shootBeam(shooter) {
         let beam = new Beam(this, shooter.x, shooter.y);
     }
+    bossShoot(shooter) {
+        let bossBeam = new BossBeam(this, shooter.x, shooter.y);
+    }
 
     hurtPlayer(player, enemy) {
+        if (this.player.alpha < 1) {
+            return;
+        }
         let explosion = new Explosion(this, player.x, player.y);
+        player.disableBody(true, true);
+        this.time.addEvent({
+            delay: 1000,
+            callback: this.resetPlayer,
+            callbackScope: this,
+            loop: false
+        });
         player.x = 100;
         player.y = this.scale.height / 2;
+    }
+    
+    resetPlayer() {
+        let x = 100;
+        let y = this.scale.height / 2 - 50;
+        this.player.enableBody(true, x, y, true, true);
+        this.player.alpha = 0.5;
+        let tween = this.tweens.add({
+            targets: this.player,
+            y: this.scale.height - 100,
+            ease: 'Power1',
+            duration: 1500,
+            repeat: 0,
+            onComplete: () => {
+                this.player.alpha = 1;
+            },
+            callbackScope: this
+        });
     }
 
     hitEnemy(projectile, enemy) {
         projectile.destroy();
+        this.bossHealth -= 1;
+        this.scoreLabel.text = "Boss HP: " + this.bossHealth;
         let explosion = new Explosion(this, enemy.x + Math.random()*128 - 64, enemy.x + Math.random()*128 - 64);
-        
+        if (this.bossHealth <= 0) {
+            this.scene.start('WinScene');
+        }
     }
 
     update() {
@@ -103,6 +158,7 @@ export default class BossScene extends Phaser.Scene {
 
         this.moveBoss(this.boss);
         this.movePlayerManager();
+        this.bossShoot(this.boss);
         if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
             this.shootBeam(this.player);
         }

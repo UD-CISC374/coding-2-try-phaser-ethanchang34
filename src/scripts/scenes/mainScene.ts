@@ -43,7 +43,7 @@ export default class MainScene extends Phaser.Scene {
     this.player.setScale(1);
     this.player.angle += 90;
     this.player.play("thrust");
-    this.cursorKeys = this.input.keyboard.createCursorKeys();
+    this.cursorKeys = this.input.keyboard.createCursorKeys(); //Allows user to control 'player'
     this.player.setCollideWorldBounds(true);
 
     this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -55,6 +55,7 @@ export default class MainScene extends Phaser.Scene {
 
 
     //Collectibles
+    //Apple, pear, and ruby will bounce arond the map
     this.apple = this.physics.add.image(this.scale.width - 100, this.scale.height / 2 + 50, "apple");
     this.apple.setScale(0.05);
     this.apple.setVelocity(20, 30);
@@ -72,6 +73,7 @@ export default class MainScene extends Phaser.Scene {
     this.ruby.setBounce(1);
     
     //Enemies
+    //3 enemy ships
     this.ship = this.add.sprite(this.scale.width - 30, this.scale.height / 2 + 30, "ship");
     this.ship2 = this.add.sprite(this.scale.width - 30, this.scale.height / 2 - 30, "ship2");
     this.ship3 = this.add.sprite(this.scale.width - 30, this.scale.height / 2 + 60, "ship3");
@@ -82,7 +84,7 @@ export default class MainScene extends Phaser.Scene {
     this.ship2.angle += 90;
     this.ship3.angle += 90;
 
-    this.ship.play("ship_anim");
+    this.ship.play("ship_anim"); //Ship animations
     this.ship2.play("ship2_anim");
     this.ship3.play("ship3.anim");
 
@@ -93,16 +95,20 @@ export default class MainScene extends Phaser.Scene {
 
     //Interactives & Physics
     this.powerUps = this.add.group();
+    //Projectiles knock back powerups
     this.physics.add.collider(this.projectiles, this.powerUps, function(projectile, powerUp) {
       projectile.destroy();
     });
+    //Player can pick up powerups
     this.physics.add.overlap(this.player, this.powerUps, this.pickPowerUp, undefined, this);
+    //Player gets hurt when running into enemies
     this.physics.add.overlap(this.player, this.enemies, this.hurtPlayer, undefined, this);
+    //Projectiles destroy enemies
     this.physics.add.overlap(this.projectiles, this.enemies, this.hitEnemy, undefined, this);
 
     
     let maxObjects = 4;
-    for (let i = 0; i <= maxObjects; i++) {
+    for (let i = 0; i <= maxObjects; i++) { // Loads in powerups and makes the bounce around the map
       let powerUp = this.physics.add.sprite(16, 16, "power-up");
       powerUp.setScale(1.5);
       this.powerUps.add(powerUp);
@@ -120,17 +126,8 @@ export default class MainScene extends Phaser.Scene {
     this.powerUps.add(this.apple)
     this.powerUps.add(this.pear);
     this.powerUps.add(this.ruby);
-    /* this.powerUps.add(this.physics.add.image(this.apple.width, this.apple.height, "apple"));
-    this.apple.setRandomPosition(0, 0, this.scale.width, this.scale.height);
-    this.powerUps.add(this.physics.add.image(this.apple.width, this.apple.height, "apple"));
-    this.apple.setRandomPosition(0, 0, this.scale.width, this.scale.height); // I want 2 apples
-    this.powerUps.add(this.physics.add.image(this.pear.width, this.pear.height, "pear"));
-    this.pear.setRandomPosition(0, 0, this.scale.width, this.scale.height);
-    this.powerUps.add(this.physics.add.image(this.ruby.width, this.ruby.height, "ruby"));
-    this.ruby.setRandomPosition(0, 0, this.scale.width, this.scale.height); */
-
-
-    //this.cameras.main.startFollow(this.player);
+  
+    //Displays the score at the top
     let graphics = this.add.graphics();
     graphics.fillStyle(0x000000, 1);
     graphics.beginPath();
@@ -145,25 +142,49 @@ export default class MainScene extends Phaser.Scene {
     let scoreFormated = this.zeroPad(this.score, 6);
     this.scoreLabel = this.add.bitmapText(10, 5, "pixelFont", "SCORE " + scoreFormated, 16);
     this.add.text(10, 20, "Playing game...", {font: "12px Arial", fill: "black"});
+    this.add.text(10, 40, "Reach 3000 points for boss", {font: "12px Arial", fill: "black"});
   }
 
-  move(obj, speed) {
+  //Moves the objects in the x direction at a given speed
+  move(obj, speed) { 
     obj.x += speed;
     if (obj.x < 0) {
       this.resetPos(obj);
     }
   }
 
+  //Randomly resets the position of the object
   resetPos(obj) {
     obj.x = this.scale.width - 10;
     let randomY = Phaser.Math.Between(0, this.scale.height);
     obj.y = randomY;
   }
 
+  //Reset player's position when hurt
+  resetPlayer() {
+    let x = this.scale.width / 2 - 64;
+    let y = this.scale.width / 2 - 24;
+    this.player.enableBody(true, x, y, true, true);
+    this.player.alpha = 0.5;
+    let tween = this.tweens.add({
+      targets: this.player,
+      y: this.scale.height - 100,
+      ease: 'Power1',
+      duration: 1500,
+      repeat: 0,
+      onComplete: () => {
+        this.player.alpha = 1;
+      },
+      callbackScope: this
+    });
+  }
+
+  //Creates a beam object
   shootBeam() {
     let beam = new Beam(this, this.player.x, this.player.y);
   }
 
+  //Adds 250 points when a player picks up a powerup
   pickPowerUp(player, powerUp) {
     this.score += 250
     let scoreFormated = this.zeroPad(this.score, 6);
@@ -171,16 +192,27 @@ export default class MainScene extends Phaser.Scene {
     powerUp.disableBody(true, true);
   }
 
+  //When the player gets hurt, the score resets and the position is reset
   hurtPlayer(player, enemy) {
+    if (this.player.alpha < 1) {
+      return;
+    }
     let explosion = new Explosion(this, player.x, player.y);
+    player.disableBody(true, true);
+    this.time.addEvent({
+      delay: 1000,
+      callback: this.resetPlayer,
+      callbackScope: this,
+      loop: false
+    });
     this.score = 0;
     let scoreFormated = this.zeroPad(this.score, 6);
     this.scoreLabel.text = "SCORE " + scoreFormated;
     this.resetPos(enemy);
-    player.x = this.scale.width / 2 - 64;
-    player.y = this.scale.height / 2 - 24;
   }
 
+  //When a projectile hits an enemy, the enemy dies and respawns
+  //Also adds 100 points to score
   hitEnemy(projectile, enemy) {
     projectile.destroy();
     let explosion = new Explosion(this, enemy.x, enemy.y);
@@ -193,6 +225,7 @@ export default class MainScene extends Phaser.Scene {
     }
   }
 
+  //Makes score look retro
   zeroPad(number, size) {
     let stringNumber = String(number);
     while (stringNumber.length < (size || 2)) {
@@ -213,10 +246,13 @@ export default class MainScene extends Phaser.Scene {
     this.movePlayerManager();
 
     if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
-      this.shootBeam();
+      if (this.player.active) {
+        this.shootBeam();
+      }
     }
   }
 
+  //Takes keyboard input and converts it to 'player' movement
   movePlayerManager() {
     if (this.cursorKeys.left?.isDown) {
       this.player.setVelocityX(-200);
