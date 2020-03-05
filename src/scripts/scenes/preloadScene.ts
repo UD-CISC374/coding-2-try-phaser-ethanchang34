@@ -4,6 +4,7 @@ export default class PreloadScene extends Phaser.Scene {
   }
 
   preload() {
+    //Load images
     this.load.image("mt_back", "assets/images/mt_back.png");
     this.load.image("mt_mid", "assets/images/mt_mid.png");
     this.load.image("mt_front", "assets/images/mt_front.png");
@@ -11,6 +12,8 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.image("pear", "assets/images/pear.png");
     this.load.image("ruby", "assets/images/ruby.png");
     this.load.image("aincrad", "assets/images/Aincrad.jpg");
+    this.load.image("anime_girl", "assets/images/anime_girl.jpg");
+    //Loadg spritesheets
     this.load.spritesheet("boss", "assets/images/boss.png", {
       frameWidth: 128,
       frameHeight: 128
@@ -49,7 +52,7 @@ export default class PreloadScene extends Phaser.Scene {
   create() {
     this.add.text(20, 20, "Loading game...");
 
-    //Animations
+    //Create animations
     this.anims.create({
       key: "ship_anim",
       frames: this.anims.generateFrameNumbers("ship", {}),

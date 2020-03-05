@@ -7,3 +7,5 @@ https://opengameart.org/content/fruits (fruit objects)
 https://github.com/ansimuz/getting-started-with-phaser/blob/master/spritesheets.zip 
 https://ansimuz.itch.io/phaser-tutorial-excercise-sound (includes everything from prior parts of the tutorial)
 https://opengameart.org/content/flamelings-sprites (boss) credits go to Surt
+Lose Scene Image found on https://wallpapersafari.com/w/CrzGjT
+Win Scene Image found on https://wall.alphacoders.com/big.php?i=632065

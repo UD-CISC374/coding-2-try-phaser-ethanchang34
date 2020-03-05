@@ -15,10 +15,11 @@ export default class BossScene extends Phaser.Scene {
     spacebar: Phaser.Input.Keyboard.Key;
     projectiles: Phaser.GameObjects.Group;
     bossProjectiles: Phaser.GameObjects.Group;
-    bossHealth: number = 25;
+    bossHealth: number = 30;
+    playerHealth: number = 10;
    
-    scoreLabel: GameObjects.BitmapText;
-    score: number;
+    bossHpLabel: GameObjects.BitmapText;
+    playerHpLabel: GameObjects.BitmapText;
 
     constructor() {
         super({ key: 'BossScene' });
@@ -77,7 +78,8 @@ export default class BossScene extends Phaser.Scene {
         graphics.lineTo(0, 0);
         graphics.closePath();
         graphics.fillPath();
-        this.scoreLabel = this.add.bitmapText(10, 5, "pixelFont", "Boss HP: " + this.bossHealth, 16);
+        this.bossHpLabel = this.add.bitmapText(10, 5, "pixelFont", "Boss HP: " + this.bossHealth, 16);
+        this.playerHpLabel = this.add.bitmapText(110, 5, "pixelFont", "Player HP: " + this.playerHealth, 16);
     }
     
     resetPos(obj) {
@@ -112,6 +114,11 @@ export default class BossScene extends Phaser.Scene {
             return;
         }
         let explosion = new Explosion(this, player.x, player.y);
+        this.playerHealth -= 1;
+        this.playerHpLabel.text = "Player HP: " + this.playerHealth;
+        if (this.playerHealth <= 0) {
+            this.scene.start('LoseScene');
+        }
         player.disableBody(true, true);
         this.time.addEvent({
             delay: 1000,
@@ -144,7 +151,7 @@ export default class BossScene extends Phaser.Scene {
     hitEnemy(projectile, enemy) {
         projectile.destroy();
         this.bossHealth -= 1;
-        this.scoreLabel.text = "Boss HP: " + this.bossHealth;
+        this.bossHpLabel.text = "Boss HP: " + this.bossHealth;
         let explosion = new Explosion(this, enemy.x + Math.random()*128 - 64, enemy.x + Math.random()*128 - 64);
         if (this.bossHealth <= 0) {
             this.scene.start('WinScene');

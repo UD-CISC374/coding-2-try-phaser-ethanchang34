@@ -84,7 +84,8 @@ export default class MainScene extends Phaser.Scene {
     this.ship2.angle += 90;
     this.ship3.angle += 90;
 
-    this.ship.play("ship_anim"); //Ship animations
+    //Ship animations
+    this.ship.play("ship_anim");
     this.ship2.play("ship2_anim");
     this.ship3.play("ship3.anim");
 
@@ -145,7 +146,11 @@ export default class MainScene extends Phaser.Scene {
     this.add.text(10, 40, "Reach 3000 points for boss", {font: "12px Arial", fill: "black"});
   }
 
-  //Moves the objects in the x direction at a given speed
+  /*Moves the objects in the x direction at a given speed
+    Takes arguments(obj, speed)
+    obj = image/sprite/tilesprite to be moved
+    speed = how fast to set the obj moving along the x direction
+  */
   move(obj, speed) { 
     obj.x += speed;
     if (obj.x < 0) {
@@ -153,14 +158,20 @@ export default class MainScene extends Phaser.Scene {
     }
   }
 
-  //Randomly resets the position of the object
+  /*Randomly resets the position of the object
+    Takes arguments(obj)
+    obj = takes the image/sprite and places it at a fixed x distance but random y distance on the screen
+  */
   resetPos(obj) {
     obj.x = this.scale.width - 10;
     let randomY = Phaser.Math.Between(0, this.scale.height);
     obj.y = randomY;
   }
 
-  //Reset player's position when hurt
+  /*Reset player's position to a certain point on the screen when hurt
+    Sets the player to be invulnerable for a short period of time
+    Takes no arguments
+  */
   resetPlayer() {
     let x = this.scale.width / 2 - 64;
     let y = this.scale.width / 2 - 24;
@@ -179,20 +190,34 @@ export default class MainScene extends Phaser.Scene {
     });
   }
 
-  //Creates a beam object
+  /*Creates a beam object
+    Takes no arguments
+  */
   shootBeam() {
     let beam = new Beam(this, this.player.x, this.player.y);
   }
 
-  //Adds 250 points when a player picks up a powerup
+  /*Adds 250 points when a player picks up/collides with a powerup
+    Checks to see is the condition for boss battle is true
+    Takes arguements(player powerUp)
+    player = the sprite that the player controls
+    powerUp = an image/sprite in the 'powerUp' group
+  */
   pickPowerUp(player, powerUp) {
     this.score += 250
     let scoreFormated = this.zeroPad(this.score, 6);
     this.scoreLabel.text = "SCORE " + scoreFormated;
     powerUp.disableBody(true, true);
+    if (this.score >= 3000) { //boss battle
+      this.scene.start('BossScene');
+    }
   }
 
-  //When the player gets hurt, the score resets and the position is reset
+  /*When the player gets hurt, the score resets and the position is reset
+    Takes arguments(player, enemy)
+    player = the sprite that the player controls
+    enemy = the sprite in the 'enemies' group
+  */
   hurtPlayer(player, enemy) {
     if (this.player.alpha < 1) {
       return;
@@ -211,8 +236,13 @@ export default class MainScene extends Phaser.Scene {
     this.resetPos(enemy);
   }
 
-  //When a projectile hits an enemy, the enemy dies and respawns
-  //Also adds 100 points to score
+  /*When a projectile hits an enemy, the enemy dies and respawns
+    Also adds 100 points to score
+    Checks for boss battle condition
+    Takes arguments(projectile, enemy)
+    projectile = the sprite in the 'projectile' group
+    enemy = the sprite in the 'enemies' group
+  */
   hitEnemy(projectile, enemy) {
     projectile.destroy();
     let explosion = new Explosion(this, enemy.x, enemy.y);
@@ -225,7 +255,9 @@ export default class MainScene extends Phaser.Scene {
     }
   }
 
-  //Makes score look retro
+  /*Makes score look retro
+    Adds zeroes before the actual score
+  */
   zeroPad(number, size) {
     let stringNumber = String(number);
     while (stringNumber.length < (size || 2)) {
