@@ -16,6 +16,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/coding-2-try-phaser-ethanchang34/finalassets/images/Aincrad.jpg"
   },
   {
+    "revision": "9078202217b5b0dda72b1cf13e4feb91",
+    "url": "/coding-2-try-phaser-ethanchang34/finalassets/images/anime_girl.jpg"
+  },
+  {
     "revision": "ff4c70f32fc186785da545a918d29183",
     "url": "/coding-2-try-phaser-ethanchang34/finalassets/images/apple.png"
   },
@@ -76,15 +80,15 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/coding-2-try-phaser-ethanchang34/finalassets/spriteSheets/ship3.png"
   },
   {
-    "revision": "bb6f96a2cdc364f363e1",
-    "url": "/coding-2-try-phaser-ethanchang34/finalgen.main.cbe71edde3ec07dcf4a6.bundle.js"
+    "revision": "dbe50d454485d45271cc",
+    "url": "/coding-2-try-phaser-ethanchang34/finalgen.main.70097f643d441cd32454.bundle.js"
   },
   {
     "revision": "91fa08b4145d5d708c39",
     "url": "/coding-2-try-phaser-ethanchang34/finalgen.vendors.ff5cbb39cff73568fd06.bundle.js"
   },
   {
-    "revision": "37f313380108220faf39f98a951460b1",
+    "revision": "3af23a980bfa3573e12402fa7c580b0d",
     "url": "/coding-2-try-phaser-ethanchang34/finalindex.html"
   },
   {
